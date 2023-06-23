@@ -10,9 +10,11 @@ HTML <- function(page){
   html_table()
   url <- url[[1]] #No sé si es un cuadrado o un paréntesis
 }
-lista <- lapply(1:2,HTML)
-data <- do.call(rbind,lista)
-data
+lista <- lapply(1:10,HTML)
+data_opt <- do.call(rbind,lista)
+directory <- file.path 
+data_opt
+summary(data_opt)
 
 # Forma lenta -------------------------------------------------------------
 for (i in 1:10) {
