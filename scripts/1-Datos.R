@@ -13,13 +13,19 @@ HTML <- function(page){
 lista <- lapply(1:2,HTML)
 data <- do.call("rbind",lista)
 data
+print("Hola")
 
+
+# Forma lenta -------------------------------------------------------------
 for (i in 1:10) {
   url<-paste0("https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_",i,".html")
   my_html<-read_html(url)
   my_table<-my_html %>% html_table()
   assign(paste0("data_",i),as.data.frame(my_table))
 }
+# Unir los datos
+dataf_lenta<-bind_rows(data_1,data_2,data_3,data_4,data_5,data_6,data_7,data_8,data_9,data_10)
+summary(dataf)
 
 url<-"https://ignaciomsarmiento.github.io/GEIH2018_sample/page1.html"
 
@@ -28,15 +34,7 @@ txt <- c("Hallo", "World")
 
 # Extracción de datos -----------------------------------------------------
 # Este loop cre un objeto para cada chunk
-for (i in 1:10) {
-  url<-paste0("https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_",i,".html")
-  my_html<-read_html(url)
-  my_table<-my_html %>% html_table()
-  assign(paste0("data_",i),as.data.frame(my_table))
-}
-# Unir los datos
-dataf<-bind_rows(data_1,data_2,data_3,data_4,data_5,data_6,data_7,data_8,data_9,data_10)
-summary(dataf)
+
 table(dataf$dominio)
 table(dataf$secuencia_p)
 boxplot(dataf$age)
