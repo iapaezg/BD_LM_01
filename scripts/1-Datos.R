@@ -4,7 +4,7 @@ p_load(tidyverse,rvest) #tidy: ggplot -- rvest webscrapping
 library(rvest)
 
 # Extracción de datos -----------------------------------------------------
-# Este loop cre un objeto para cada chunk
+# Este loop crea un objeto para cada chunk y lo une en una lista
 HTML <- function(page){
   url<-read_html(paste0("https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_",page,".html")) %>%
   html_table()
