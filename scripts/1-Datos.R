@@ -8,13 +8,11 @@ library(rvest)
 HTML <- function(page){
   url<-read_html(paste0("https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_",page,".html")) %>%
   html_table()
-  url <- as.data.framr(url[[page]]) #No sé si es un cuadrado o un paréntesis
+  url <- url[[1]] #No sé si es un cuadrado o un paréntesis
 }
 lista <- lapply(1:2,HTML)
-data <- do.call("rbind",lista)
+data <- do.call(rbind,lista)
 data
-print("Hola")
-
 
 # Forma lenta -------------------------------------------------------------
 for (i in 1:10) {
@@ -25,7 +23,7 @@ for (i in 1:10) {
 }
 # Unir los datos
 dataf_lenta<-bind_rows(data_1,data_2,data_3,data_4,data_5,data_6,data_7,data_8,data_9,data_10)
-summary(dataf)
+summary(dataf_lenta)
 
 url<-"https://ignaciomsarmiento.github.io/GEIH2018_sample/page1.html"
 
