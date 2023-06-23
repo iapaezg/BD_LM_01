@@ -1,0 +1,34 @@
+age
+clase
+college
+maxEducLevel
+cotPension
+dsi
+estrato1
+fex_c
+fex_dpto
+formal
+informal
+oficio
+relab
+pea---poblacion economicamente activa
+pet---poblacion en edad de trabjar
+wap-- poblacion en edade de trabajar
+ocu
+iof----------todos
+ingtot ----- todos
+p6050
+directorio
+secuenciap
+orden
+clase
+dominio
+sex
+totalHoursWor_d
+y_ingLab_m
+y_ingLab_m_ha
+y_otros_m
+y_salary_m
+y_salary_m_hu
+y_total_m
+y_total_m_ha
