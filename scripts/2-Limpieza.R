@@ -1,28 +1,22 @@
 # Limpieza -----------------------------------------------------
 rm(list=ls())
-setwd("~/OneDrive - Universidad de los andes/0. BIG DATA/repositorios/BD_LM_01/stores")
 require(tidyverse)
+setwd("~/OneDrive - Universidad de los andes/0. BIG DATA/repositorios/BD_LM_01/stores")
+data_lim <- readRDS("df_raw.rds")
+summary(data_lim$age)
+age_data<-data_lim %>% subset(data_lim$age>=18)
+summary(data_lim$age)
+
+###IVAN - - - - - - ## -> Ojo esto no lo corran estoy intentando unas cosas
+#age_data<-data_lim %>% filter(data_lim$age>=18)
+url_data <- RCurl::getURL("https://github.com/iapaezg/BD_LM_01/blob/d93cc92081ff0bd94f293e937f09b12676d6c29f/stores/df_raw.rds")
+df <- load(url(url_data))
 
 data_lim <- readRDS("df_raw.rds")
 summary(data_lim$age)
 age_data<-data_lim %>% subset(data_lim$age>=18)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-##### -> Ojo esto no lo corran estoy intentando unas cosas
-#age_data<-data_lim %>% filter(data_lim$age>=18)
 age_data
 summary(age_data$age)
 var <- c("directorio","secuencia_p", "orden", "clase", "estrato1", "sex", "age" %>% 
