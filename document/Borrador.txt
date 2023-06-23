@@ -1,0 +1,21 @@
+Introducción 
+Revisión de literatura: 
+a.	Posición
+b.	Contrastar con la literatura
+
+Data: 
+
+La base de datos contiene la información de ingresos por hogares y unidad de gasto del año 2018 para 32.177 individuos pertenecientes a 10.567 hogares de 10.403 viviendas localizadas en la ciudad de la ciudad de Bogotá, sin discriminar por rango de edad. La base de datos es de propiedad del DANE y su uso inicial correspondía a determinar las
+líneas para el cálculo de la incidencia de pobreza e indigencia de la muestra. Los individuos presentan edades entre los 0 y 106 años, con un promedio de 34,4 años; de los cuales el 47,9% son hombres y el 52,1% son mujeres.
+
+Falta la descripción para mayores 18
+
+
+Escribir la ecuación y describirla
+
+Resultados: 
+Presentar los resultados y conectarlos con la revisión de literatura
+Presentar los resultados robustos
+Conclusión:
+Referencias: 
+Tablas y figuras:
