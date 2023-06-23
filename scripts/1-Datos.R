@@ -1,9 +1,28 @@
-
 # Scrapear ----------------------------------------------------------------
 require(pacman) #Contiene p_load()
 p_load(tidyverse,rvest) #tidy: ggplot -- rvest webscrapping
 library(rvest)
+
+# Extracción de datos -----------------------------------------------------
+# Este loop cre un objeto para cada chunk
+HTML <- function(page){
+  url<-read_html(paste0("https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_",page,".html")) %>%
+  html_table()
+  url <- as.data.framr(url[[page]]) #No sé si es un cuadrado o un paréntesis
+}
+lista <- lapply(1:2,HTML)
+data <- do.call("rbind",lista)
+data
+
+for (i in 1:10) {
+  url<-paste0("https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_",i,".html")
+  my_html<-read_html(url)
+  my_table<-my_html %>% html_table()
+  assign(paste0("data_",i),as.data.frame(my_table))
+}
+
 url<-"https://ignaciomsarmiento.github.io/GEIH2018_sample/page1.html"
+
 
 txt <- c("Hallo", "World")
 
