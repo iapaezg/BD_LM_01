@@ -15,6 +15,15 @@ data_opt <- do.call(rbind,lista)
 str(data_opt)
 summary(data_opt)
 
+# Guardar datos -----------------------------------------------------------
+getwd()
+ls()
+saveRDS(data_opt,"df_raw.rds")
+
+#library(data.table) #Para guardar como CSV
+#fwrite(data_opt,"df_raw.csv")
+
+
 # Forma lenta -------------------------------------------------------------
 for (i in 1:10) {
   url<-paste0("https://ignaciomsarmiento.github.io/GEIH2018_sample/pages/geih_page_",i,".html")
@@ -31,4 +40,4 @@ library(data.table)
 getwd()
 ls()
 #saveRDS(data_opt,"df_raw.rds")
-fwrite(data_opt,"df_raw.csv")
+#fwrite(data_opt,"df_raw.csv")
