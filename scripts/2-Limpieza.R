@@ -6,14 +6,17 @@ p_load(rio, # import/export data
        tidyverse, # tidy-data
        skimr, # summary data
        caret) # Classification And REgression Training
-df <- import("https://github.com/iapaezg/BD_LM_01/blob/d93cc92081ff0bd94f293e937f09b12676d6c29f/stores/df_raw.rds")
-df <- import("https://github.com/iapaezg/BD_LM_01/blob/main/stores/df_raw.rds")
+df <- import("https://github.com/iapaezg/BD_LM_01/raw/main/stores/df_raw.rds")
+str(df)
+summary(df$age)
+age_df<-df %>% subset(df$age>=18)
+summary(age_df$age)
+boxplot(age_df$age)
+#age_data<-df %>% filter(df$age>=18)
+sum(is.na(df$age))
+df %>% count(df$age)
 
-df <- as_tibble(df)
-data_lim <- readRDS("df_raw.rds")
-summary(data_lim$age)
-age_data<-data_lim %>% subset(data_lim$age>=18)
-summary(data_lim$age)
+
 
 ###IVAN - - - - - - ## -> Ojo esto no lo corran estoy intentando unas cosas
 #age_data<-data_lim %>% filter(data_lim$age>=18)
