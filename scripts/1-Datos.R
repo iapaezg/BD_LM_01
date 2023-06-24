@@ -27,6 +27,8 @@ dataf_lenta<-bind_rows(data_1,data_2,data_3,data_4,data_5,data_6,data_7,data_8,d
 summary(dataf_lenta)
 
 # Guardar datos -----------------------------------------------------------
+library(data.table)
 getwd()
 ls()
-saveRDS(data_opt,"df_raw.rds")
+#saveRDS(data_opt,"df_raw.rds")
+fwrite(data_opt,"df_raw.csv")
