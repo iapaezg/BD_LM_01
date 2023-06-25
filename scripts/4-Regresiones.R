@@ -3,7 +3,6 @@ rm(list=ls())
 if(!require(pacman)) install.packages(pacman) ; require(pacman)
 require(pacman)
 p_load(car,tidyverse,fixest, stargazer,knitr,kableExtra,jtools,ggstance,broom,broom.mixed,skimr)
-
 df <- import("https://github.com/iapaezg/BD_LM_01/raw/main/stores/data_final.rds")
 df <- df %>% 
   select(estrato1:exp2)
@@ -16,9 +15,6 @@ df[cols] <- lapply(df[cols],factor)
 names(df)
 skim(df)
 
-df <- import("https://github.com/iapaezg/BD_LM_01/raw/main/stores/data_final.rds")
-
-table(df$hijos,df$sex)
 # Age-wage profile --------------------------------------------------------
 X <- df %>% 
   select(age,age2)
@@ -61,9 +57,20 @@ beta_fn <- function(formula,data,indices){
 reps <- boot(data=dat,statistic=beta_fn,R=1000,formula=y~.)
 reps
 
-# Intervalos de confianza
-
-
+# Valor máximo
+set.seed(2023)
+R <- 1000
+reg_age <- rep(0,R)
+for(i in 1:R) {
+  sample <- sample_frac(dat,size=1,repace=TRUE)
+  f <- lm(y~.,sample)
+  coefs <- f$coefficients
+  b1 <- coefs[2]
+  b2 <- coefs[3]
+  reg_age[i] <- b1/(-2*b2)
+}
+histogram(reg_age)
+max(reg_age)
 
 
 ggplot(dat, aes(y = y, x = age)) +
