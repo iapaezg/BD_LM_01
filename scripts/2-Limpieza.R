@@ -51,9 +51,9 @@ w_df <- age_df %>% select(var,starts_with("iof"),starts_with("ingtot"))
 # no laborales (iof) (intereses, pensiones, ayudas, cesantias, arriendos y otros) .
 # Inspección de variables
 # Se elimnan las var cotPension dado que se incluye en formal
-w_df <- w_df %>% select(-starts_with("iof"),-starts_with("y_"),-ingtotes,-ingtotob,-cotPension)
+w_df <- w_df %>% select(-starts_with("iof"),-starts_with("y_"),-ingtotes,-ingtotob,-cotPension,-clase)
 skim(w_df)
-w_df <- w_df %>% rename(urbano=clase) # Se cambia el nombre de la variable
+
 w_df <- w_df %>% rename(desempleado=dsi)
 w_df <- w_df %>% rename(posicion=p6050)
 w_df <- w_df %>% rename(educ=p6210s1)
