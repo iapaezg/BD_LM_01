@@ -54,7 +54,7 @@ boxplot(df$exp,ylab="Experiencia potencial (años)")
 histogram(df$estrato1,xlab="Estrato",ylab="Porcentaje",col="grey")
 histogram(df$maxEducLevel,xlab="Máximo nivel educativo",ylab="Porcentaje",col="grey")
 histogram(df$hijos,xlab="Número de hijos",ylab="Porcentaje",col="grey")
-piechart(df$sex)
+pie(df$sex)
 
 hijo_sex <- ggplot(data=df) +
   geom_histogram(mapping=aes(x=hijos,group=as.factor(sex),fill=as.factor(sex)))
