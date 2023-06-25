@@ -8,83 +8,66 @@ p_load(rio, # import/export data
        caret) # Classification And REgression Training
 df <- import("https://github.com/iapaezg/BD_LM_01/raw/main/stores/df_raw.rds")
 str(df)
-summary(df$age)
-age_df<-df %>% subset(df$age>=18)
+df <- df %>% select((directorio:y_total_m_ha)) #Se elimina la primera columna
+
+
+# Crea variable hijos y pareja -----------------------------------------------------
+df <- df %>% mutate(hijo=case_when(p6050==3~1))
+df <- df %>% replace_na(list(hijo=0)) # Reemplazar na por 0
+df <- df %>% mutate(pareja=case_when(p6050==2~1))
+df <- df %>% replace_na(list(pareja=0)) # Reemplazar na por 0
+hijo_hog <- df %>%
+  group_by(directorio,secuencia_p) %>% 
+  summarize(hijos=sum(hijo))
+skim(hijo_hog$hijos)
+hijo_hog <- hijo_hog %>% mutate(t_hijo=case_when(hijos!=0~1))
+hijo_hog <- hijo_hog %>% replace_na(list(t_hijo=0))
+
+h_df <- df %>% 
+  full_join(hijo_hog,by=c("directorio","secuencia_p"))
+names(h_df)
+h_df$hijos[h_df$p6050>=3] <- 0
+h_df$t_hijo[h_df$p6050>=3] <- 0
+df <- h_df
+skim(df$age)
+
+# Seleccionar mayores de 18 y variables finales -----------------------------------------------
+age_df<-df %>% filter(age>=18) #Seleccion de mayores e iguales a 18
 summary(age_df$age)
-boxplot(age_df$age)
-#age_data<-df %>% filter(df$age>=18)
-sum(is.na(df$age))
-df %>% count(df$age)
+skim(age_df$age)
 
+# Selección de las variables de interés
+names(age_df)
+var <- c("directorio","secuencia_p", "orden", "clase", "estrato1","sex",
+         "age","p6050","relab","oficio","college","maxEducLevel","cotPension",
+         "dsi","formal","informal","pea","pet","wap","totalHoursWorked","y_ingLab_m",
+         "y_ingLab_m_ha","y_otros_m","y_salary_m","y_salary_m_hu","y_total_m","y_total_m_ha","pareja","hijos","t_hijo")
+w_df <- age_df %>% select(var,starts_with("iof"),starts_with("ingtot"))
 
+# Luego de revisar la definición de las variables priorizadas, debido a que la var ingtot incluye
+# el ingreso observado e imputado de las fuentes:ingreso monetario primera actividad (impa), ingreso segunda actividad (isa),
+# ingreso en especie (ie), ingreso monetario desocupados e inactivos (imdi) e ingresos provenientes de otras fuentes 
+# no laborales (iof) (intereses, pensiones, ayudas, cesantias, arriendos y otros) .
+# Inspección de variables
+# Se elimnan las var informal, cotPension dado que se incluye en formal
 
-###IVAN - - - - - - ## -> Ojo esto no lo corran estoy intentando unas cosas
-#age_data<-data_lim %>% filter(data_lim$age>=18)
-url_data <- RCurl::getURL("https://github.com/iapaezg/BD_LM_01/blob/d93cc92081ff0bd94f293e937f09b12676d6c29f/stores/df_raw.rds")
-df <- load(url(url_data))
+w_df <- w_df %>% select(-starts_with("iof"),-starts_with("y_"),-ingtotes,-ingtotob,-informal,-cotPension)
+skim(w_df)
 
-data_lim <- readRDS("df_raw.rds")
-summary(data_lim$age)
-age_data<-data_lim %>% subset(data_lim$age>=18)
+# Cambiar los NA de relab, oficio (sin relab, sin oficio) + formal
+w_df <- w_df %>% replace_na(list(relab=0,oficio=0,formal=0)) # Reemplazar na por 0
+skim(w_df)
 
+# Crear variables de ingreso/hora -----------------------------------------
+# Ingreso de ingtot se determinó que era mensual por lo cual se procedió a calcular el ingreso/hora
+w_df <- w_df %>% mutate(hora_ing=ingtot/4.28/48)
+w_df <- w_df %>% mutate(hora_ingrep=ingtot/4.28/totalHoursWorked)
+skim(w_df)
+table(w_df$formal,w_df$informal,useNA = "always")
+plot(w_df$totalHoursWorked,w_df$ingtot)
 
-age_data
-summary(age_data$age)
-var <- c("directorio","secuencia_p", "orden", "clase", "estrato1", "sex", "age" %>% 
-         "p6050","relab","oficio","age","clase","college","maxEducLevel","cotPension" %>% 
-         "dsi","formal","informal","pea","pet","wap","totalHoursWor_d","y_ingLab_m" %>% 
-         "y_ingLab_m_ha","y_otros_m","y_salary_m","y_salary_m_hu","y_total_m","y_total_m_ha")
-df <- age_data %>% filter(var,stars_with("iof"),stars_with("ingtot"))
-         dsi
-         estrato1
-         fex_c
-         fex_dpto
-         formal
-         informal
-         oficio
-         relab
-         pea---poblacion economicamente activa
-         pet---poblacion en edad de trabjar
-         wap-- poblacion en edade de trabajar
-         ocu
-         iof----------todos
-         ingtot ----- todos
-         p6050
-         directorio
-         secuenciap
-         orden
-         clase
-         dominio
-         sex
-         totalHoursWor_d
-         y_ingLab_m
-         y_ingLab_m_ha
-         y_otros_m
-         y_salary_m
-         y_salary_m_hu
-         y_total_m
-         y_total_m_ha
-)
-df <- subset(age_data,select=)
-
-table(dataf$dominio)
-table(dataf$secuencia_p)
-boxplot(dataf$age)
-summary(dataf$age)
-dataf %>%
-  mutate(id_hogares=paste0(dataf$directorio,dataf$secuencia_p))
-dataf %>%
-  count(dataf$directorio,dataf$secuencia_p)
-dataf %>%
-  group_by(directorio,secuencia_p) %>%
-  summarize(count=n())
-dataf %>%
-  group_by(directorio) %>%
-  summarize(count=n())
-summary(dataf$age)
-summary(dataf$sex) # sex	=1 male, =0 female
-table(dataf$sex)
-age_data<-subset(dataf,dataf$age>=18)
-summary(age_data$age)
-str(age_data)
-ls(age_data)
+# Se eliminan datos de ingreso=0, dado que no dan información
+w_df <- w_df %>% 
+  filter(ingtot>0)
+skim(w_df)
+saveRDS(w_df,"data_final.rds")
