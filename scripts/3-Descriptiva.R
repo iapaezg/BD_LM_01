@@ -1,3 +1,16 @@
+# Cargue datos -----------------------------------------------------
+rm(list=ls())
+if(!require(pacman)) install.packages("pacman") ; require(pacman)
+require(pacman)
+p_load(rio, # import/export data
+       tidyverse, # tidy-data
+       skimr, # summary data
+       caret) # Classification And REgression Training
+df <- import("https://github.com/iapaezg/BD_LM_01/raw/main/stores/data_final.rds")
+
+
+# Descriptiva -------------------------------------------------------------
+
 
 summary(age_df$age)
 boxplot(age_df$age)

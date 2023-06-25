@@ -39,9 +39,10 @@ skim(age_df$age)
 # Selección de las variables de interés
 names(age_df)
 var <- c("directorio","secuencia_p", "orden", "clase", "estrato1","sex",
-         "age","p6050","relab","oficio","college","maxEducLevel","cotPension",
-         "dsi","formal","informal","pea","pet","wap","totalHoursWorked","y_ingLab_m",
-         "y_ingLab_m_ha","y_otros_m","y_salary_m","y_salary_m_hu","y_total_m","y_total_m_ha","pareja","hijos","t_hijo")
+         "age","p6050","relab","oficio","maxEducLevel","cotPension",
+         "dsi","formal","pea","pet","totalHoursWorked","y_ingLab_m",
+         "y_ingLab_m_ha","y_otros_m","y_salary_m","y_salary_m_hu",
+         "y_total_m","y_total_m_ha","pareja","hijos","t_hijo")
 w_df <- age_df %>% select(var,starts_with("iof"),starts_with("ingtot"))
 
 # Luego de revisar la definición de las variables priorizadas, debido a que la var ingtot incluye
@@ -51,23 +52,27 @@ w_df <- age_df %>% select(var,starts_with("iof"),starts_with("ingtot"))
 # Inspección de variables
 # Se elimnan las var informal, cotPension dado que se incluye en formal
 
-w_df <- w_df %>% select(-starts_with("iof"),-starts_with("y_"),-ingtotes,-ingtotob,-informal,-cotPension)
+w_df <- w_df %>% select(-starts_with("iof"),-starts_with("y_"),-ingtotes,-ingtotob,-cotPension)
 skim(w_df)
+w_df <- w_df %>% rename(urbano=clase) # Se cambia el nombre de la variable
+w_df <- w_df %>% rename(empleado=dsi)
 
 # Cambiar los NA de relab, oficio (sin relab, sin oficio) + formal
-w_df <- w_df %>% replace_na(list(relab=0,oficio=0,formal=0)) # Reemplazar na por 0
+w_df <- w_df %>% replace_na(list(oficio=0,formal=0)) # Reemplazar na por 0
 skim(w_df)
 
 # Crear variables de ingreso/hora -----------------------------------------
-# Ingreso de ingtot se determinó que era mensual por lo cual se procedió a calcular el ingreso/hora
-w_df <- w_df %>% mutate(hora_ing=ingtot/4.28/48)
-w_df <- w_df %>% mutate(hora_ingrep=ingtot/4.28/totalHoursWorked)
-skim(w_df)
-table(w_df$formal,w_df$informal,useNA = "always")
-plot(w_df$totalHoursWorked,w_df$ingtot)
-
 # Se eliminan datos de ingreso=0, dado que no dan información
 w_df <- w_df %>% 
   filter(ingtot>0)
 skim(w_df)
+
+# Ingreso de ingtot se determinó que era mensual por lo cual se procedió a calcular el ingreso/hora
+w_df <- w_df %>% mutate(hora_ing=ingtot/4.28/48)
+w_df <- w_df %>% mutate(hora_ingrep=ingtot/4.28/totalHoursWorked)
+skim(w_df)
+plot(w_df$totalHoursWorked,w_df$ingtot)
+w_df <- w_df %>% select(-hora_ingrep,-totalHoursWorked)
+skim(w_df)
+
 saveRDS(w_df,"data_final.rds")
