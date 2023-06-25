@@ -39,7 +39,7 @@ age_data<-data_lim %>% subset(data_lim$age>=18)
 age_data
 summary(age_data$age)
 var <- c("directorio","secuencia_p", "orden", "clase", "estrato1", "sex", "age" %>% 
-           "p6050","relab","oficio","age","clase","college","maxEducLevel","cotPension" %>% 
+           "p6050","oficio","age","clase","college","maxEducLevel","cotPension" %>% 
            "dsi","formal","informal","pea","pet","wap","totalHoursWor_d","y_ingLab_m" %>% 
            "y_ingLab_m_ha","y_otros_m","y_salary_m","y_salary_m_hu","y_total_m","y_total_m_ha")
 df <- age_data %>% filter(var,stars_with("iof"),stars_with("ingtot"))
