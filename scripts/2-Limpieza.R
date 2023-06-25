@@ -39,10 +39,10 @@ skim(age_df$age)
 # Selección de las variables de interés
 names(age_df)
 var <- c("directorio","secuencia_p", "orden", "clase", "estrato1","sex",
-         "age","p6050","relab","oficio","maxEducLevel","cotPension",
-         "dsi","formal","pea","pet","totalHoursWorked","y_ingLab_m",
+         "age","oficio","maxEducLevel","cotPension",
+         "dsi","formal","pea","totalHoursWorked","y_ingLab_m",
          "y_ingLab_m_ha","y_otros_m","y_salary_m","y_salary_m_hu",
-         "y_total_m","y_total_m_ha","pareja","hijos","t_hijo")
+         "y_total_m","y_total_m_ha","hijos","t_hijo")
 w_df <- age_df %>% select(var,starts_with("iof"),starts_with("ingtot"))
 
 # Luego de revisar la definición de las variables priorizadas, debido a que la var ingtot incluye
@@ -55,7 +55,7 @@ w_df <- age_df %>% select(var,starts_with("iof"),starts_with("ingtot"))
 w_df <- w_df %>% select(-starts_with("iof"),-starts_with("y_"),-ingtotes,-ingtotob,-cotPension)
 skim(w_df)
 w_df <- w_df %>% rename(urbano=clase) # Se cambia el nombre de la variable
-w_df <- w_df %>% rename(empleado=dsi)
+w_df <- w_df %>% rename(desempleado=dsi)
 
 # Cambiar los NA de relab, oficio (sin relab, sin oficio) + formal
 w_df <- w_df %>% replace_na(list(oficio=0,formal=0)) # Reemplazar na por 0
@@ -64,7 +64,7 @@ skim(w_df)
 # Crear variables de ingreso/hora -----------------------------------------
 # Se eliminan datos de ingreso=0, dado que no dan información
 w_df <- w_df %>% 
-  filter(ingtot>0)
+  filter(ingtot>0,maxEducLevel>=0)
 skim(w_df)
 
 # Ingreso de ingtot se determinó que era mensual por lo cual se procedió a calcular el ingreso/hora
