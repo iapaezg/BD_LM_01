@@ -36,7 +36,7 @@ df <- df %>%
 str(df)
 
 # Definiendo las columnas que son factores
-cols <- c("estrato1","sex","oficio","maxEducLevel","posicion","relab",
+cols <- c("estrato1","oficio","maxEducLevel","posicion","relab",
           "desempleado","formal","pea","t_hijo")
 df[cols] <- lapply(df[cols],factor)
 df_stat <- df %>% 
@@ -48,7 +48,7 @@ estadisticas_tbl <- as.data.frame(estadisticas)
 save(estadisticas_tbl,file="descriptiva.doc")
 stargazer(df_stat,type="text",out="stat.txt")
 names(df)
-skim(df)
+skim(df_stat)
 describe(df_stat)
 
 library(psych)
@@ -59,17 +59,6 @@ df_descriptiva <- df %>%
   select()
 skim(df)
 s_descrip <- skim(df)
-save()
-psych::describe(df)
-names(df)
-summary2 <- skim(df)
-class(summary2)
-df_tbl <- as.data.frame(summary2)
-df <- df %>% 
-  table1(~urbano+estrato1+sex+oficio+maxEducLevel+posicion+relab+desempleado+formal+t_hijo+pea)
-table1(~age+exp+ln_income,data=df)
-df <- df %>% 
-  factor(list(urbano,estrato1,sex,oficio,maxEducLevel,posicion,relab,desempleado,formal,t_hijo))
 
 # Descriptiva -------------------------------------------------------------
 boxplot(df$ln_income,ylab="Ln ingreso/hora")
