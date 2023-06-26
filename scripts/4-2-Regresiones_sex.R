@@ -13,7 +13,8 @@ if(!require(devtools)) install.packages("devtools") ; require(devtools)
 require(devtools)
 
 require(grDevices)
-
+install.packages("MASS")
+require(MASS)
 p_load(rio, # import/export data
        tidyverse, # tidy-data
        skimr, # summary data
@@ -25,7 +26,7 @@ p_load(car,tidyverse,fixest, stargazer,knitr,kableExtra,jtools,ggstance,broom,br
 df <- import("https://github.com/iapaezg/BD_LM_01/raw/main/stores/data_final.rds")
 
 ## gender-wage profile --------------------------------------------------------
-
+# 4.a Ingreso-hombre
 X <- df %>% 
   select(sex)
 y <- df %>% 
@@ -35,6 +36,11 @@ dat=cbind(X,y)
 mod_sex <- lm(y~.,data=dat,x=TRUE)
 stargazer(mod_sex,type="text",dep.var.labels = c("Modelo ingreso hora con el género"),
           digits = 4, out="mod_sex.txt")
+mod_sex_r <- rlm(y~.,data=dat,x=TRUE)
+stargazer(mod_sex_r,type="text",dep.var.labels = c("Modelo ingreso hora con el género"),
+          digits = 4, out="mod_sex.txt")
+
+# 4.b Ingreso-hombre
 
 # Determina y gorro y residuos del modelo
 y_hat <- fitted(mod_sex)
