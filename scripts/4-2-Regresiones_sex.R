@@ -74,55 +74,88 @@ reg_df_sex <- reg_df_sex %>%
 
 reg_res <- lm(res_ln_c~res_sex_c,reg_df_sex)
 stargazer(reg_FWL_sex,reg_FWL_con,reg_res,type="text",digits=4,omit=c("educ","estrato1","age","age2","exp","t_hijo","oficio","relab"),
-          dep.var.labels=c("OLS"),out="mod_sex_controles.txt")  
-  
-  
+          dep.var.labels=c("OLS"),out="mod_sex_controles.txt")
 
-
-# Determina y gorro y residuos del modelo
-y_hat <- fitted(mod_sex)
-res <- resid(mod_sex)
-dat_p <- cbind(dat,res,y_hat)
-
-# Grafica el estimado de la función
-ggplot(dat_p) +
-  geom_point(aes(x=sex,y=y_hat)) +
-  ggtitle("Relación género-ingresos") +
-  labs(x="Género", y="Predicción ln ingresos/hora")
-
-# Analisis de residuos
-qqnorm(res)
-qqline(res)
-plot(res,dat$y,ylab = "Ln Ingreso/hora",xlab = "Residuos")
-residualPlots(mod_sex)
-
-
-# Bootstraping ------------------------------------------------------------
-p_load(boot)
-#boot(data,statistic,R)
-#Funcion
+# Bootstrap FWL
 set.seed(2023)
-beta_fn <- function(formula,data,indices){
-  d <- data[indices,]
-  fit <- lm(formula,data=d)
-  return(coef(fit))
-  }
-reps <- boot(data=dat,statistic=beta_fn,R=1000,formula=y~.)
-reps
+p_load("boot")
+rFWL_boot <- reg_df_sex %>% 
+  select(ln_income:relab)
+names(regFWL_boot)
 
-# Valor máximo
-set.seed(2023)
-R <- 1000
-reg_sex <- rep(0,R)
-for(i in 1:R) {
-  sample <- sample_frac(dat,size=1,repace=TRUE)
-  f <- lm(y~.,sample)
-  coefs <- f$coefficients
-  b1 <- coefs[2]
-  b2 <- coefs[3]
-  reg_sex[i] <- b1/(-2*b2)
+FWL_fn <-function(data,index){
+  rFWL_boot <- subset (reg_df_sex, select = c(ln_income:relab))
+  data<-data %>% mutate(res_sex_c=lm(sex~educ+estrato1+age+age2+exp+t_hijo+oficio+relab)$residuals) #Residuos sex~controles
+  data<-data %>% mutate(res_ln_c=lm(ln_income~educ+estrato1+age+age2+exp+t_hijo+oficio+relab)$residuals) #Residuos ingreso~controles 
+  coef(lm(res_ln_c~res_sex_c,data = data, subset = index))[2]  # Regreso res ing_c ~ res sex~controles, tomo b1
 }
-histogram(reg_age)
-max(reg_sex)
+FWL_fn(rFWL_boot,1:nrow(rFWL_boot))
+FWboot <- boot(rFWL_boot,FWL_fn,R=1000)
+FWboot
 
+# 4c-Plot edad-salario por género
+# Hombres
+set.seed(2023)
+rFWL_boot <- reg_df_sex %>% 
+  select(ln_income:relab)
+rFWL_bootM <- rFWL_boot[rFWL_boot$sex==1,]
+str(rFWL_bootM)
+reg_male <- lm(ln_income~age+age2,data=rFWL_bootM)
+stargazer(reg_male,type="text",digits=4,dep.var.labels = "Hombre",dep.var.caption = "Ln Ingresos")
+coefM <- reg_male$coefficients
+rFWL_bootM <- rFWL_bootM %>% 
+  mutate(ing_m=predict(reg_male))
+str(rFWL_bootM)
+plot(rFWL_bootM$age,rFWL_bootM$ing_m,xlab="Edad (años)",ylab="ln ingreso/hora")
 
+#Valor maximo
+mal_max <- function(data,index){
+  data <- data[index,]
+  coef_mal <- (lm(ln_income~age+age2,data=data))$coefficients
+  b1 <- coef_mal[2]
+  b2 <- coef_mal[3]
+  edad_max <- b1/(-2*b2)
+  return(edad_max)
+}
+mal_max(rFWL_bootM,1:nrow(rFWL_bootM))
+boot_male <- boot(rFWL_bootM,mal_max,R=1000)
+boot_male
+boot.ci(boot.out = boot_male,type=c("norm"))
+plot(rFWL_bootM$age,rFWL_bootM$ing_m,xlab="Edad (años)",ylab="ln ingreso/hora")
+abline(v=50.0164,col="green")
+
+# Mujeres
+set.seed(2023)
+rFWL_boot <- reg_df_sex %>% 
+  select(ln_income:relab)
+rFWL_bootM <- rFWL_boot[rFWL_boot$sex==0,]
+str(rFWL_bootM)
+reg_female <- lm(ln_income~age+age2,data=rFWL_bootM)
+stargazer(reg_female,type="text",digits=4,dep.var.labels = "Mujer",dep.var.caption = "Ln Ingresos")
+coefM <- reg_female$coefficients
+rFWL_bootM <- rFWL_bootM %>% 
+  mutate(ing_m=predict(reg_female))
+str(rFWL_bootM)
+plot(rFWL_bootM$age,rFWL_bootM$ing_m,xlab="Edad (años)",ylab="ln ingreso/hora")
+
+#Valor maximo
+mal_max <- function(data,index){
+  data <- data[index,]
+  coef_mal <- (lm(ln_income~age+age2,data=data))$coefficients
+  b1 <- coef_mal[2]
+  b2 <- coef_mal[3]
+  edad_max <- b1/(-2*b2)
+  return(edad_max)
+}
+mal_max(rFWL_bootM,1:nrow(rFWL_bootM))
+boot_male <- boot(rFWL_bootM,mal_max,R=1000)
+boot_male
+boot.ci(boot.out = boot_male,type=c("norm"))
+
+plot(rFWL_bootM$age,rFWL_bootM$ing_m,xlab="Edad (años)",ylab="ln ingreso/hora")
+abline(v=43.1892,col="green")
+
+# Regresiones
+skim(reg_df_sex)
+stargazer(reg_male,reg_female,type="text",digits=4,dep.var.caption = "Ln Ingresos",
+          out="reg_sex.txt")
