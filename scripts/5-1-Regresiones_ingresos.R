@@ -164,67 +164,18 @@ ordenMSE <- MSEtabla[order(MSEtabla$MSE_table), ]
 View(ordenMSE)
       
 
-
-
-
-
-
-
-
-
-
-
-# De todos los modelos presentados, los que tienen un menor MSE son los modelos nuevos 1 y 3. Es decir, en donde se tiene un mejor performance en la predicción. 
-# Sin embargo, los MSE son muy similares a los de los demás modelos, especialmente el modelo previo 3 a y los nuevos 2, 4 y 5. 
-
-# Apalancamiento
-install.packages("caret")
-library(caret)
-alpha <- c()
-u <- c()
-h <- c()
-
-#El modelo con menor error cuadrático medio se calcula nuevamente
-bestmodel<-lm(lningresoh ~ sex + age + age2 + educ + lnexperp + relab + estrato1, data = test_data)
-
-#Calcular el leverage para el modelo con el menor MSE
-alphass <- c()
-for (j in 1:nrow(test_data)) {
-  u_j <- bestmodel$residual[j]
-  h_j <- lm.influence(bestmodel)$hat[j]
-  alpha <- u_j/(1-h_j)
-  alphass <- c(alphass, alpha)
-} 
-
-#Teniendo en cuenta que es posible que un leverage mayor a 1 o menor que -1 se podría considerar alto, se calcula lo siguiente:
-alphass<-data.frame(alphass)
-leverage<-alphass[alphass$alphass>=1|alphass<=-1,]
-leverage<-data.frame(leverage)
-lvpercentage<-((nrow(leverage)/nrow(alphass)*100))
-xlabel_alpha<-1:nrow(test_data)
-xlabel_alpha<-data.frame(xlabel_alpha)
-alphass<-cbind(alphass, xlabel_alpha)
-view(lvpercentage)
-
-# Se grafican los resultados obtenidos
-ggplot(data=alphass, aes(x = xlabel_alpha, y = alphass, group=1)) + 
-  geom_point() + 
-  ggtitle("Leverage para el modelo con mejor métrica de MSE")
-
-#Se consultan los valores máximos y mínimos
-max(alphass$alphass)
-min(alphass$alphass)
-
+# LOOCV -------------------------------------------------------------------
 ----------------------------------------------------------------------------------------
-  # LOOCV para el modelo con mejor performance predictivo, es decir, el mn1
+  # LOOCV para modelo 3
   GEIHSO$lnexperp <- log(GEIHSO$experp)
 
-modelLOOCV1 <- train(lningresoh ~ sex + age + age2 + educ + lnexperp + relab + estrato1, 
-                     data = GEIHSO,
+modelLOOCV1 <- train(ln_income ~ sex + educ + estrato1 + age + age2 + exp + t_hijo + oficio 
+                     +relab, 
+                     data = df,
                      method = "lm",
                      trControl = trainControl(method = "LOOCV"))
 
-# Resultados 
+# Generación de resultados 
 modelLOOCV1
 
 RMSE_modelLOOCV1<-modelLOOCV1$results
@@ -233,21 +184,4 @@ RMSE_modelLOOCV1<-mean(RMSE_modelLOOCV1)
 
 view(RMSE_modelLOOCV1)
 # 
-
-# LOOCV para el segundo modelo con mejor performance predictivo, es decir, el mn3
-modelLOOCV2 <- train(lningresoh ~ sex + age + educ + experp + I(experp^2) + relab + estrato1, 
-                     data = GEIHSO,
-                     method = "lm",
-                     trControl = trainControl(method = "LOOCV"))
-
-# Resultados 
-modelLOOCV2
-
-RMSE_modelLOOCV2<-modelLOOCV2$results
-RMSE_modelLOOCV2<-RMSE_modelLOOCV2$RMSE
-RMSE_modelLOOCV2<-mean(RMSE_modelLOOCV2)
-
-view(RMSE_modelLOOCV2)
-# 
-
 
