@@ -62,6 +62,11 @@ corrplot(mat_cor, type="upper", tl.col="black", tl.srt=45)
 reg_sexc <- lm(ln_income~sex+educ+estrato1+age+age2+exp+t_hijo+oficio+relab,data=reg_df_sex)
 car::vif(reg_sexc) # No se puede correr porque tenemos variables categóricas en el modelo
 
+# FWL
+reg_FWL_sex <- lm(ln_income~sex,data=reg_df_sex)
+reg_FWL_con <- lm(ln_income~.,data=reg_df_sex)
+stargazer(reg_FWL_sex,reg_FWL_con,type="text",digits=4,omit=c("educ","estrato1","age","age2","exp","t_hijo","oficio","relab"),
+          dep.var.labels=c("OLS"),out="mod_sex_controles.txt")
 
 # Determina y gorro y residuos del modelo
 y_hat <- fitted(mod_sex)
