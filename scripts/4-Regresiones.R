@@ -37,7 +37,6 @@ ggplot(dat_p) +
   ggtitle("Relación edad-ingresos") +
   labs(x="Edad (años)", y="Predicción ln ingresos/hora")
 
-
 # Analisis de residuos
 qqnorm(res)
 qqline(res)
@@ -56,23 +55,37 @@ beta_fn <- function(formula,data,indices){
   }
 reps <- boot(data=dat,statistic=beta_fn,R=1000,formula=y~.)
 reps
+str(reps)
 
 # Valor máximo
 set.seed(2023)
 R <- 1000
 reg_age <- rep(0,R)
 for(i in 1:R) {
-  sample <- sample_frac(dat,size=1,repace=TRUE)
+  sample <- sample_frac(dat,size=1,replace=TRUE)
   f <- lm(y~.,sample)
   coefs <- f$coefficients
   b1 <- coefs[2]
   b2 <- coefs[3]
   reg_age[i] <- b1/(-2*b2)
 }
-histogram(reg_age)
-max(reg_age)
+hist(reg_age,xlab="Edad",ylab="Porcentaje",main="Edad para el máximo ln ingreso/hora",col="gray")
+abline(v=mean(reg_age),col="blue",lwd=3)
+summary(reg_age)
+mean(reg_age)
+
+# Intervalo de confianza
+ICb0 <- 1.96*4.345893e-02
+ICb1 <- 1.96*2.069112e-03
+ICb2 <- 1.96*2.209662e-05
+
+ICb0
+ICb1
+ICb2
 
 
+
+lm(y~.,sample)
 ggplot(dat, aes(y = y, x = age)) +
   geom_point() + # add points
   stat_smooth(formula = 'y ~ X', method = lm, se = FALSE, 
