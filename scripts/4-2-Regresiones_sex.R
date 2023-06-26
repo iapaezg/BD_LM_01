@@ -68,6 +68,17 @@ reg_FWL_con <- lm(ln_income~.,data=reg_df_sex)
 stargazer(reg_FWL_sex,reg_FWL_con,type="text",digits=4,omit=c("educ","estrato1","age","age2","exp","t_hijo","oficio","relab"),
           dep.var.labels=c("OLS"),out="mod_sex_controles.txt")
 
+reg_df_sex <- reg_df_sex %>% 
+  mutate(res_sex_c=lm(sex~educ+estrato1+age+age2+exp+t_hijo+oficio+relab)$residuals) %>% #Residuos sex~controles
+  mutate(res_ln_c=lm(ln_income~educ+estrato1+age+age2+exp+t_hijo+oficio+relab)$residuals) #Residuos ingreso~controles
+
+reg_res <- lm(res_ln_c~res_sex_c,reg_df_sex)
+stargazer(reg_FWL_sex,reg_FWL_con,reg_res,type="text",digits=4,omit=c("educ","estrato1","age","age2","exp","t_hijo","oficio","relab"),
+          dep.var.labels=c("OLS"),out="mod_sex_controles.txt")  
+  
+  
+
+
 # Determina y gorro y residuos del modelo
 y_hat <- fitted(mod_sex)
 res <- resid(mod_sex)
