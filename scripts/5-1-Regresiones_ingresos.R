@@ -227,7 +227,7 @@ view(RMSE_modelLOOCV1)
 
 # LOOCV para modelo nuevo 2
 
-modelLOOCV2 <- train(ln_income ~ ~ sex + age + age2 + educ + relab + estrato1 + sex*estrato1, 
+modelLOOCV2 <- train(ln_income ~ sex + age + age2 + educ + relab + estrato1 + sex*estrato1, 
                      data = df,
                      method = "lm",
                      trControl = trainControl(method = "LOOCV"))
@@ -235,9 +235,9 @@ modelLOOCV2 <- train(ln_income ~ ~ sex + age + age2 + educ + relab + estrato1 + 
 # Generación de resultados 
 modelLOOCV2
 
-RMSE_modelLOOCV2<-modelLOOCV1$results
-RMSE_modelLOOCV2<-RMSE_modelLOOCV1$RMSE
-RMSE_modelLOOCV2<-mean(RMSE_modelLOOCV1)
+RMSE_modelLOOCV2<-modelLOOCV2$results
+RMSE_modelLOOCV2<-RMSE_modelLOOCV2$RMSE
+RMSE_modelLOOCV2<-mean(RMSE_modelLOOCV2)
 
 view(RMSE_modelLOOCV2)
 #
