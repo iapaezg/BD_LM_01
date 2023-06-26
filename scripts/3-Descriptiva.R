@@ -30,7 +30,33 @@ sapply(libs, function(x) eval(req) || {install.packages(x); eval(req)})
 df <- import("https://github.com/iapaezg/BD_LM_01/raw/main/stores/data_final.rds")
 
 # Descriptivas PENDIENTE------------------------------------------------------------
-summary(df)
+skim(df_stat)
+df <- df %>% 
+  select(estrato1:exp2)
+str(df)
+
+# Definiendo las columnas que son factores
+cols <- c("estrato1","sex","oficio","maxEducLevel","posicion","relab",
+          "desempleado","formal","pea","t_hijo")
+df[cols] <- lapply(df[cols],factor)
+df_stat <- df %>% 
+  select(estrato1,sex,relab,t_hijo,age,educ,exp,ln_income)
+stargazer(df,type="text",out="stat.txt")
+estadisticas <- skim(df_stat)
+class(estadisticas)
+estadisticas_tbl <- as.data.frame(estadisticas)
+save(estadisticas_tbl,file="descriptiva.doc")
+stargazer(df_stat,type="text",out="stat.txt")
+names(df)
+skim(df)
+describe(df_stat)
+
+library(psych)
+install.packages("modelsummary")
+library(modelsummary)
+datasummary_skim(df_stat)
+df_descriptiva <- df %>% 
+  select()
 skim(df)
 s_descrip <- skim(df)
 save()
