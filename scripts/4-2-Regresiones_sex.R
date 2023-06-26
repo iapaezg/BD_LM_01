@@ -36,11 +36,32 @@ dat=cbind(X,y)
 mod_sex <- lm(y~.,data=dat,x=TRUE)
 stargazer(mod_sex,type="text",dep.var.labels = c("Modelo ingreso hora con el género"),
           digits = 4, out="mod_sex.txt")
-mod_sex_r <- rlm(y~.,data=dat,x=TRUE)
+mod_sex_r <- rlm(y~.,data=dat)
 stargazer(mod_sex_r,type="text",dep.var.labels = c("Modelo ingreso hora con el género"),
           digits = 4, out="mod_sex.txt")
 
 # 4.b Ingreso-hombre
+cols <- c("estrato1","oficio","posicion","relab")
+df[cols] <- lapply(df[cols],factor)
+names(df)
+skim(df)
+str(df)
+reg_df_sex <- df %>% 
+  select(ln_income,sex,estrato1,age,age2,exp,educ,t_hijo,oficio,relab)
+reg_sexc <- lm(ln_income~sex+educ+estrato1+age+age2+exp+t_hijo+oficio+relab,data=reg_df_sex)
+stargazer(reg_sexc,type="text",dep.var.labels=c("OLS"),digits=4)
+
+# Existe posible colinealidad entre años de educación y años de experiencia
+library(dplyr)
+reg_df_sex %>% select(-ln_income) %>% cor(method="pearson") %>% round(digits=2) -> mat_cor
+install.packages("corrplot")
+library(corrplot)
+corrplot(mat_cor, type="upper", tl.col="black", tl.srt=45)
+
+# Test VIF
+reg_sexc <- lm(ln_income~sex+educ+estrato1+age+age2+exp+t_hijo+oficio+relab,data=reg_df_sex)
+car::vif(reg_sexc) # No se puede correr porque tenemos variables categóricas en el modelo
+
 
 # Determina y gorro y residuos del modelo
 y_hat <- fitted(mod_sex)
